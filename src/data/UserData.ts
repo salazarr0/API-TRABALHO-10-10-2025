@@ -1,4 +1,5 @@
 import { connection } from "../dbConnection";
+import { User } from "../types/User";
 export class UserData {
     async getUserById(userId: Number) {
         try {
@@ -14,6 +15,30 @@ export class UserData {
             return users;
         } catch (error: any) {
             throw new Error(error.sqlMessage || error.message);
+        }
+    }
+
+    async getUserByEmail(userEmail: string){
+        try{
+            const users = await connection('users').where({email: userEmail}).first();
+            return users;
+        }catch(error: any){
+            throw new Error(error.sqlMessage|| error.message);
+        }
+    }
+
+    async postNewUser(name: string, email: string){
+        try{
+            const user: User = await connection('users')
+                .insert([{name: name, email: email}]);
+            const newUser = { 
+                id: user.id,
+                name,
+                email
+            }
+            return newUser;
+        }catch(error: any){
+            throw new Error(error.sqlMessage|| error.message);
         }
     }
 }

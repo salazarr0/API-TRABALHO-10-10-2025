@@ -28,4 +28,17 @@ export class UserController {
             res.status(500).send({ error: error.message });
         }
     };
+
+    public postUsers = async (req: Request, res: Response) =>{
+        try{
+            const {name, email} = req.body;
+            if(!name || !email){
+                res.status(409).send("Campos faltantes!\nVerifique se email e name estão inseridos.");
+            }
+            const users = await this.userBusiness.postNewUser(name,email);
+            res.status(201).send(users);
+        }catch(error: any){
+            res.status(409).send({error: error.message });
+        }
+    }
 }

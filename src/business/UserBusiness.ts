@@ -20,4 +20,32 @@ export class UserBusiness {
             throw new Error(error.message);
         }
     }
+
+    private async veryEmail(email: string): Promise<boolean>{
+        try{
+            const users = await this.userData.getUserByEmail(email);
+            if(users){
+                return true;
+            }
+            return false;
+        }catch(error:any){
+            throw new Error(error.message);
+        }
+    }
+
+    public async postNewUser( name: string, email: string): Promise<User>{
+        try{
+            const emaiIsTrue = await this.veryEmail(email);
+            if(emaiIsTrue){
+                throw new Error("Email já existente");
+            }
+
+            const newUser = await this.userData.postNewUser(name, email);
+
+            return newUser;
+
+        }catch(error:any){
+            throw new Error(error.message);
+        }
+    }
 }
