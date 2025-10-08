@@ -1,0 +1,30 @@
+{
+  "name": "trabalho_api_10_10_2025",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+     "build": "tsc",
+     "start": "node dist/server.js"
+
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "knex": "^3.1.0",
+    "mysql2": "^3.15.1"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/knex": "^0.16.1",
+    "@types/node": "^24.7.0",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.9.3"
+  }
+}
