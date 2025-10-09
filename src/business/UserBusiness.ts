@@ -48,4 +48,32 @@ export class UserBusiness {
             throw new Error(error.message);
         }
     }
+
+    private async verifyId(id: number):Promise<boolean>{
+        try {
+            const user = await this.userData.getUserById(id);
+            if(user){
+                return true;
+            }
+            return false;
+        } catch (error:any) {
+            throw  new Error(error.message);
+        }
+    }
+    public async putUser(id: number, updateName: string, updateEmail: string): Promise<User>{
+        try{
+            const emaiIsTrue = await this.veryEmail(updateEmail);
+            if(emaiIsTrue){
+                throw new Error("Email já existente");
+            }
+            const idIsTrue = await this.verifyId(id)
+            if(idIsTrue){
+                const userUpdate = await this.userData.insertTotalUpdate(id,updateName,updateEmail)
+                return userUpdate;
+            }
+            throw new Error(`Usuario com id: ${id} não existe!`);
+        }catch(error: any){
+            throw new Error(error.message)
+        }
+    }
 }

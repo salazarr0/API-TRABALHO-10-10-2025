@@ -29,16 +29,50 @@ export class UserController {
         }
     };
 
-    public postUsers = async (req: Request, res: Response) =>{
-        try{
-            const {name, email} = req.body;
-            if(!name || !email){
+    public postUsers = async (req: Request, res: Response) => {
+        try {
+            const { name, email } = req.body;
+            if (!name || !email) {
                 res.status(409).send("Campos faltantes!\nVerifique se email e name estão inseridos.");
             }
-            const users = await this.userBusiness.postNewUser(name,email);
+            const users = await this.userBusiness.postNewUser(name, email);
             res.status(201).send(users);
-        }catch(error: any){
-            res.status(409).send({error: error.message });
+        } catch (error: any) {
+            res.status(409).send({ error: error.message });
+        }
+    };
+
+    public putUsers = async (req: Request, res: Response) => {
+        try {
+            const id = Number(req.params.id);
+            const updateName = req.body.name;
+            const updateEmail = req.body.email;
+
+            if (isNaN(id)) {
+                res.status(404).send("Campo 'id' obrigatoriamente tem que ser um número!");
+                return;
+            }
+            if (id === undefined) {
+                res.status(404).send(":id faltante!")
+                return;
+            }
+            if (updateName === undefined || updateEmail === undefined) {
+                res.status(404).send("Campos faltantes!\nVerifique se email e name estão inseridos.");
+                return;
+            }
+
+
+            const user = await this.userBusiness.putUser(id, updateName, updateEmail);
+            res.status(201).send(user);
+
+        } catch (error: any) {
+            if (error.message.includes("não encontrado")) {
+                res.status(404).send({ message: error.message });
+            } else if (error.message.includes("Email já existente")) {
+                res.status(409).send({ message: error.message }); 
+            } else {
+                res.status(500).send({ message: "Ocorreu um erro inesperado." });
+            }
         }
     }
 }

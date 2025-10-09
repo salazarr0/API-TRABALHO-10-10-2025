@@ -30,13 +30,35 @@ export class UserData {
     async postNewUser(name: string, email: string){
         try{
             const user: User = await connection('users')
-                .insert([{name: name, email: email}]);
+                .insert([
+                    {name: name, email: email}
+                ]);
             const newUser = { 
                 id: user.id,
                 name,
                 email
             }
             return newUser;
+        }catch(error: any){
+            throw new Error(error.sqlMessage|| error.message);
+        }
+    }
+
+    async insertTotalUpdate(id: number, updateName: string, updateEmail: string){
+        try{
+            await connection('users')
+            .where({id: id})
+            .update({
+                name: updateName,
+                email: updateEmail,
+            });
+
+            const userUpdate = await connection('users')
+            .select("*")
+            .where({id:id})
+            .first();
+
+            return userUpdate;
         }catch(error: any){
             throw new Error(error.sqlMessage|| error.message);
         }
