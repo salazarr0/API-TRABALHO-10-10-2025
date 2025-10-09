@@ -81,5 +81,5 @@ export class UserData {
         await connection('users')
         .where({id:idUsuario})
         .del();
-    } 
+    }
 }
