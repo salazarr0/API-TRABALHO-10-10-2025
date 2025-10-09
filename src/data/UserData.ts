@@ -1,15 +1,28 @@
 import { connection } from "../dbConnection";
 import { User } from "../types/User";
 export class UserData {
-    async getUserById(userId: Number) {
+
+    async pegarUsuarioComPetsVinculadosNoBD(idDoUsuario: Number){
+        try{
+            const usuarioComPetsVinculados: User = await connection('pets')
+            .where({user_id: idDoUsuario})
+            .first();
+            return usuarioComPetsVinculados;
+        }catch(error: any){
+            throw new error(error.sqlMessage ||error.message);
+        }
+    }
+
+    async pegarUsuarioPeloIdNoBD(userId: Number) {
         try {
-            const user = await connection('users').where({ id: userId }).first();
+            const user : User = await connection('users').where({ id: userId }).first();
             return user;
         } catch (error: any) {
             throw new Error(error.sqlMessage || error.message);
         }
     }
-    async getAllUsers() {
+
+    async pegarTodosUsuariosNoBD() {
         try {
             const users = await connection('users').select();
             return users;
@@ -18,16 +31,16 @@ export class UserData {
         }
     }
 
-    async getUserByEmail(userEmail: string){
+    async pegarUsuarioPeloEmailNoBD(userEmail: string){
         try{
-            const users = await connection('users').where({email: userEmail}).first();
-            return users;
+            const userE : User = await connection('users').where({email: userEmail}).first();
+            return userE;
         }catch(error: any){
             throw new Error(error.sqlMessage|| error.message);
         }
     }
 
-    async postNewUser(name: string, email: string){
+    async criarUsuarioNoBancoDeDados(name: string, email: string){
         try{
             const user: User = await connection('users')
                 .insert([
@@ -44,18 +57,18 @@ export class UserData {
         }
     }
 
-    async insertTotalUpdate(id: number, updateName: string, updateEmail: string){
+    async atualizarUsuarioNoBancoDeDados(idUsuario: Number, updateName: string, updateEmail: string){
         try{
             await connection('users')
-            .where({id: id})
+            .where({id: idUsuario})
             .update({
                 name: updateName,
                 email: updateEmail,
             });
 
-            const userUpdate = await connection('users')
+            const userUpdate: User = await connection('users')
             .select("*")
-            .where({id:id})
+            .where({id:idUsuario})
             .first();
 
             return userUpdate;
@@ -63,4 +76,10 @@ export class UserData {
             throw new Error(error.sqlMessage|| error.message);
         }
     }
+
+    async deletarUsuarioNoBancoDeDados(idUsuario: Number){
+        await connection('users')
+        .where({id:idUsuario})
+        .del();
+    } 
 }

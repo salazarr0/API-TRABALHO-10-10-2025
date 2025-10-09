@@ -11,7 +11,7 @@ export class UserController {
                 });
             }
             const idNumber = Number(id);
-            const user = await this.userBusiness.getUserById(idNumber);
+            const user = await this.userBusiness.pegarUsuarioPeloId(idNumber);
             if (!user) {
                 return res.status(404).json({ error: 'Usuário não encontrado' });
             }
@@ -22,7 +22,7 @@ export class UserController {
     };
     public getAll = async (req: Request, res: Response) => {
         try {
-            const users = await this.userBusiness.getAllUsers();
+            const users = await this.userBusiness.pegarTodosUsuarios();
             res.status(200).send(users);
         } catch (error: any) {
             res.status(500).send({ error: error.message });
@@ -35,10 +35,14 @@ export class UserController {
             if (!name || !email) {
                 res.status(409).send("Campos faltantes!\nVerifique se email e name estão inseridos.");
             }
-            const users = await this.userBusiness.postNewUser(name, email);
+            const users = await this.userBusiness.postarNovoUsuario(name, email);
             res.status(201).send(users);
         } catch (error: any) {
-            res.status(409).send({ error: error.message });
+            if (error.message.includes("Email já existente")) {
+                res.status(409).send({ message: error.message }); 
+            }else {
+                res.status(500).send({ message: "Ocorreu um erro inesperado." });
+            }
         }
     };
 
@@ -61,14 +65,42 @@ export class UserController {
                 return;
             }
 
+            const user = await this.userBusiness.atualizarUsuario(id, updateName, updateEmail);
 
-            const user = await this.userBusiness.putUser(id, updateName, updateEmail);
+            if (!user) {
+                return res.status(404).json({ error: 'Usuário não encontrado' });
+            }
+
             res.status(201).send(user);
 
         } catch (error: any) {
-            if (error.message.includes("não encontrado")) {
+            if (error.message.includes("Falha ao encontrar usuário: Número vinculado a nenhum usuário!")) {
                 res.status(404).send({ message: error.message });
             } else if (error.message.includes("Email já existente")) {
+                res.status(409).send({ message: error.message }); 
+            } else {
+                res.status(500).send({ message: "Ocorreu um erro inesperado." });
+            }
+        }
+    }
+
+    public deleteUsers = async (req: Request, res: Response) =>{
+        try{
+            const id = Number(req.params.id);
+            if(isNaN(id)){
+                res.status(404).send("Campo 'id' obrigatoriamente tem que ser um número!");
+                return;
+            }else if (id === undefined) {
+                res.status(404).send(":id faltante!")
+                return;
+            }else{
+                await this.userBusiness.deletarUsuario(id);
+                res.status(204).send();
+            }
+        }catch(error: any){
+            if (error.message.includes("Falha ao encontrar usuário: Número vinculado a nenhum usuário!")) {
+                res.status(404).send({ message: error.message });
+            } else if (error.message.includes("Falha ao excluir: Usuário tem pet(s) vinculados!")) {
                 res.status(409).send({ message: error.message }); 
             } else {
                 res.status(500).send({ message: "Ocorreu um erro inesperado." });
