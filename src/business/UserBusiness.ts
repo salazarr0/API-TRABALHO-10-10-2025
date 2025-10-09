@@ -68,9 +68,8 @@ export class UserBusiness {
             }
 
             const newUser = await this.userData.criarUsuarioNoBancoDeDados(name, email);
-
             return newUser;
-
+            
         }catch(error:any){
             throw new Error(error.message);
         }

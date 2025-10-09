@@ -22,6 +22,7 @@ export class PetController {
             res.status(500).send({ error: error.message });
         }
     };
+
     public getAll = async (req: Request, res: Response) => {
         try {
             const users = await this.petBusiness.pegarTodosPets();
@@ -30,4 +31,26 @@ export class PetController {
             res.status(500).send({ error: error.message });
         }
     };
+
+    public postPet = async (req: Request, res: Response) => {
+        try {
+            const postName = req.body.name;
+            const postIdUser = parseInt(req.body.user_id);
+
+            if (!postName) {
+                res.status(400).send("O 'name' não pode ser string vazia!");
+            }else if(!postIdUser){
+                res.status(400).send("O 'user_id' deve ser inserido!");
+            }
+            const novoPet = await this.petBusiness.postarNovoPet(postName,postIdUser);
+            res.status(201).send(novoPet);
+            
+        } catch (error: any) {
+            if (error.message.includes("User_id inválido!")) {
+                res.status(400).send({ message: error.message }); 
+            }else {
+                res.status(500).send({ message: "Ocorreu um erro inesperado." });
+            }
+        }
+    }
 }

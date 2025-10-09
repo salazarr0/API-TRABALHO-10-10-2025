@@ -33,7 +33,7 @@ export class UserController {
         try {
             const { name, email } = req.body;
             if (!name || !email) {
-                res.status(409).send("Campos faltantes!\nVerifique se email e name estão inseridos.");
+                res.status(400).send("Campos faltantes!\nVerifique se email e name estão inseridos.");
             }
             const users = await this.userBusiness.postarNovoUsuario(name, email);
             res.status(201).send(users);
@@ -53,15 +53,15 @@ export class UserController {
             const updateEmail = req.body.email;
 
             if (isNaN(id)) {
-                res.status(404).send("Campo 'id' obrigatoriamente tem que ser um número!");
+                res.status(400).send("Campo 'id' obrigatoriamente tem que ser um número!");
                 return;
             }
-            if (id === undefined) {
-                res.status(404).send(":id faltante!")
+            if (!id) {
+                res.status(400).send(":id faltante!")
                 return;
             }
-            if (updateName === undefined || updateEmail === undefined) {
-                res.status(404).send("Campos faltantes!\nVerifique se email e name estão inseridos.");
+            if (!updateName|| !updateEmail ) {
+                res.status(400).send("Campos faltantes!\nVerifique se email e name estão inseridos.");
                 return;
             }
 
@@ -88,10 +88,10 @@ export class UserController {
         try{
             const id = Number(req.params.id);
             if(isNaN(id)){
-                res.status(404).send("Campo 'id' obrigatoriamente tem que ser um número!");
+                res.status(400).send("Campo 'id' obrigatoriamente tem que ser um número!");
                 return;
-            }else if (id === undefined) {
-                res.status(404).send(":id faltante!")
+            }else if (!id) {
+                res.status(400).send(":id faltante!")
                 return;
             }else{
                 await this.userBusiness.deletarUsuario(id);

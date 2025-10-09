@@ -20,5 +20,22 @@
             throw new Error(error.sqlMessage || error.message);
         }
     }
+
+    async criarPetNoBancoDeDados(name: string, user_id: Number){
+            try{
+                const pet: Pet = await connection('pets')
+                    .insert([
+                        {name: name, user_id: user_id}
+                    ]);
+                const newPet = { 
+                    id: pet.id,
+                    name,
+                    user_id
+                }
+                return newPet;
+            }catch(error: any){
+                throw new Error(error.sqlMessage|| error.message);
+            }
+        }
  }
  

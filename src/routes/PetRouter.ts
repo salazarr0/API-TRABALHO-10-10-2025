@@ -7,8 +7,8 @@ const petController = new PetController();
 petRouter.get('/', petController.getAll);
 petRouter.get('/:id', petController.getById);
 
-//petRouter.post('/', petController.postUsers);
+petRouter.post('/', petController.postPet);
 
-//petRouter.put('/:id',petController.putUsers);
+//petRouter.put('/:id',petController.putPet);
 
-//petRouter.delete('/:id',petController.deleteUsers);
+//petRouter.delete('/:id',petController.deletePet);
