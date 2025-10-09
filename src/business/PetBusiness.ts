@@ -15,6 +15,19 @@ export class PetBusiness {
         }
     }
 
+     private async verificarIdExistente(id: Number):Promise<boolean>{
+        try {
+            const pet = await this.petData.pegarPetPeloIdNoBD(id);
+            if(pet){
+                return true;
+            }else{
+              return false;  
+            }
+        } catch (error:any) {
+            throw new Error(error.message);
+        }
+    }
+
     public async pegarPetPeloId(petId: Number): Promise<Pet | null> {
         try{
             const pet = await this.petData.pegarPetPeloIdNoBD(petId);
@@ -46,6 +59,24 @@ export class PetBusiness {
             throw new Error(error.message);
         }
     }
+
+    public async atualizarPet(id: Number, updateName: string, updateUserId: Number): Promise<Pet>{
+            try{
+                const emaiIsTrue = await this.verificarReferenciaDaFgKey(updateUserId);
+                if(!emaiIsTrue){
+                    throw new Error("User_id inválido");
+                }
+                const idIsTrue = await this.verificarIdExistente(id);
+                if(idIsTrue){
+                    const petUpdate = await this.petData.atualizarPetNoBancoDeDados(id,updateName,updateUserId);
+                    return petUpdate;
+                }else{
+                    throw new Error("Falha ao encontrar o pet: Id vinculado a nenhum pet");
+                }
+            }catch(error: any){
+                throw new Error(error.message)
+            }
+        }
 
 
 }

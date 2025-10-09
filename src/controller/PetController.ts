@@ -37,7 +37,7 @@ export class PetController {
             const postName = req.body.name;
             const postIdUser = parseInt(req.body.user_id);
 
-            if (!postName) {
+            if (!postName|| postName.trim() === '') {
                 res.status(400).send("O 'name' não pode ser string vazia!");
             }else if(!postIdUser){
                 res.status(400).send("O 'user_id' deve ser inserido!");
@@ -49,6 +49,52 @@ export class PetController {
             if (error.message.includes("User_id inválido!")) {
                 res.status(400).send({ message: error.message }); 
             }else {
+                res.status(500).send({ message: "Ocorreu um erro inesperado." });
+            }
+        }
+    }
+
+    public putPet = async (req: Request, res: Response) => {
+        try {
+            const id = Number(req.params.id);
+            const updateName = req.body.name;
+            const updateUserId = Number(req.body.user_id);
+
+            if (isNaN(id)) {
+                res.status(400).send("Campo 'id' obrigatoriamente tem que ser um número!");
+                return;
+            }
+            else if(!id) {
+                res.status(400).send(":id faltando!")
+                return;
+            }
+            else if(isNaN(updateUserId)){
+                res.status(400).send("Campo 'userId' obrigatoriamente tem que ser um número!");
+                return;
+            }
+            else if(!updateUserId){
+                res.status(400).send("user_id faltando!")
+                return;
+            }
+            else if (!updateName || updateName.trim() === '') {
+                res.status(400).send("Campo(s) inválido!\nVerifique se 'name' está inseridos.");
+                return;
+            }
+
+            const pet = await this.petBusiness.atualizarPet(id, updateName, updateUserId);
+
+            if (!pet) {
+                return res.status(404).json({ error: 'Pet não encontrado' });
+            }
+
+            res.status(201).send(pet);
+
+        } catch (error: any) {
+            if (error.message.includes("Falha ao encontrar pet: Id vinculado a nenhum pet!")) {
+                res.status(404).send({ message: error.message });
+            } else if (error.message.includes("User_id inválido")) {
+                res.status(400).send({ message: error.message }); 
+            } else {
                 res.status(500).send({ message: "Ocorreu um erro inesperado." });
             }
         }

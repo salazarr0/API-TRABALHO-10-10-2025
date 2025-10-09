@@ -37,5 +37,26 @@
                 throw new Error(error.sqlMessage|| error.message);
             }
         }
+
+        
+         async atualizarPetNoBancoDeDados(idPet: Number,updateName: String, updateUserId: Number){
+                try{
+                    await connection('pets')
+                    .where({id: idPet})
+                    .update({
+                        name: updateName,
+                        user_id: updateUserId,
+                    });
+        
+                    const petUpdate: Pet = await connection('pets')
+                    .select("*")
+                    .where({id:idPet})
+                    .first();
+    
+                    return petUpdate;
+                }catch(error: any){
+                    throw new Error(error.sqlMessage|| error.message);
+                }
+            }
  }
  
