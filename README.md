@@ -139,7 +139,4 @@ Descrição: Retorna uma lista de todos os pets cadastrados.
 Resposta de Sucesso: 200 OK com um array de objetos de pets.
 
 Autor
-
-Sávio Salazar - salazarr0 (https://github.com/salazarr0)
-
 -   Samuel Salazar Barros Guimarães - [salazarr0](https://github.com/salazarr0)
