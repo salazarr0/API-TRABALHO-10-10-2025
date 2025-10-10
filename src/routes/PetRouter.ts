@@ -9,6 +9,6 @@ petRouter.get('/:id', petController.getById);
 
 petRouter.post('/', petController.postPet);
 
-petRouter.put('/:id',petController.putPet);
+petRouter.put('/:id', petController.putPet);
 
-//petRouter.delete('/:id',petController.deletePet);
+petRouter.delete('/:id', petController.deletePet);

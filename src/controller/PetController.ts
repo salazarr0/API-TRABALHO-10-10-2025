@@ -37,18 +37,18 @@ export class PetController {
             const postName = req.body.name;
             const postIdUser = parseInt(req.body.user_id);
 
-            if (!postName|| postName.trim() === '') {
+            if (!postName || postName.trim() === '') {
                 res.status(400).send("O 'name' não pode ser string vazia!");
-            }else if(!postIdUser){
+            } else if (!postIdUser) {
                 res.status(400).send("O 'user_id' deve ser inserido!");
             }
-            const novoPet = await this.petBusiness.postarNovoPet(postName,postIdUser);
+            const novoPet = await this.petBusiness.postarNovoPet(postName, postIdUser);
             res.status(201).send(novoPet);
-            
+
         } catch (error: any) {
             if (error.message.includes("User_id inválido!")) {
-                res.status(400).send({ message: error.message }); 
-            }else {
+                res.status(400).send({ message: error.message });
+            } else {
                 res.status(500).send({ message: "Ocorreu um erro inesperado." });
             }
         }
@@ -64,15 +64,15 @@ export class PetController {
                 res.status(400).send("Campo 'id' obrigatoriamente tem que ser um número!");
                 return;
             }
-            else if(!id) {
+            else if (!id) {
                 res.status(400).send(":id faltando!")
                 return;
             }
-            else if(isNaN(updateUserId)){
+            else if (isNaN(updateUserId)) {
                 res.status(400).send("Campo 'userId' obrigatoriamente tem que ser um número!");
                 return;
             }
-            else if(!updateUserId){
+            else if (!updateUserId) {
                 res.status(400).send("user_id faltando!")
                 return;
             }
@@ -93,7 +93,29 @@ export class PetController {
             if (error.message.includes("Falha ao encontrar pet: Id vinculado a nenhum pet!")) {
                 res.status(404).send({ message: error.message });
             } else if (error.message.includes("User_id inválido")) {
-                res.status(400).send({ message: error.message }); 
+                res.status(400).send({ message: error.message });
+            } else {
+                res.status(500).send({ message: "Ocorreu um erro inesperado." });
+            }
+        }
+    }
+
+    public deletePet = async (req: Request, res: Response) => {
+        try {
+            const id = Number(req.params.id);
+            if (isNaN(id)) {
+                res.status(400).send("Campo 'id' obrigatoriamente tem que ser um número!");
+                return;
+            } else if (!id) {
+                res.status(400).send(":id faltante!")
+                return;
+            } else {
+                await this.petBusiness.deletarPet(id);
+                res.status(204).send();
+            }
+        } catch (error: any) {
+            if (error.message.includes("Falha ao encontrar pet: Id vinculado a nenhum pet!")) {
+                res.status(400).send({ message: error.message });
             } else {
                 res.status(500).send({ message: "Ocorreu um erro inesperado." });
             }
